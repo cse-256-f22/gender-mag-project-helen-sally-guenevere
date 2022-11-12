@@ -70,6 +70,9 @@
                     <p id="mturk-top-banner-text">
                         You are logged in as "administrator"
                     </p>
+                    <p style="color:rgb(221, 8, 8)" id="mturk-top-banner-text">
+                        Click the arrow on the bottom right to access the task!
+                    </p>
                     <span id="mturk-top-banner-inner-span">
                         <span class="mturk-top-banner-button mturk-top-banner-back-wh footer"
                             id="mturk-top-banner-arrow">
@@ -91,10 +94,10 @@
                 <div title="Permission Entry" id="permentry">
                     <div id="perm_entry_inheritance_explanation" style="display:none" class="section">This permission is
                         inherited from the parent object. Make changes here to override the inherited permissions.</div>
-                    <span id="perm_entry_name_text">Name: </span>
-                    <span id="perm_entry_username" class="ui-widget-content section"
-                        style="width:200px;display:inline-block;"></span>
-                    <button id="perm_entry_change_user" class="ui-button ui-widget ui-corner-all">Change...</button>
+                    <span id="perm_entry_name_text">User: </span>
+                    <span id="perm_entry_username" class="ui-widget-content section">No User Selected</span>
+                    <button id="perm_entry_change_user" class="ui-button ui-widget ui-corner-all">Select user</button>
+                    <p style="color: red">Changeable permissions: any permissions related to writing and modifying are known as changeable permissions</p>
                     <table id="perm_entry_table" class="ui-widget-content section">
                         <tr id="perm_entry_header">
                             <th id="perm_entry_header_p" width="99%">Permissions</th>
@@ -110,13 +113,14 @@
                             <li id="advtab_title_permissions"><a href="#adv_permissions_tab"
                                     id="adv_permissions_tab_elem">Permissions</a></li>
                             <li id="advtab_title_owner"><a href="#adv_owner_tab" id="adv_owner_tab_elem">Owner</a></li>
-                            <li id="advtab_title_effective"><a href="#adv_effective_tab"
-                                    id="adv_effective_tab_elem">Effective Permissions</a></li>
+                            <!-- <li id="advtab_title_effective"><a href="#adv_effective_tab"
+                                    id="adv_effective_tab_elem">Effective Permissions</a></li> -->
                         </ul>
                         <div id="adv_permissions_tab">
-                            <div id="adv_perm_object_name" class="section">Object Name: <span
+                            <div id="adv_perm_object_name" class="section"style="font-weight:bold" >Object Name: <span
                                     id="adv_perm_filepath"></span></div>
-                            <div id="adv_perm_entries_text">Permission entries:</div>
+                            <button id="adv_perm_edit" class="ui-button ui-widget ui-corner-all">Edit...</button>
+                            <div id="adv_perm_entries_text" style="font-weight:bold">Permission entries:</div>
                             <div id="adv_perm_table_container" style="height:100px;overflow-y:scroll"
                                 class="ui-widget-content section">
                                 <table id="adv_perm_table" width="100%">
@@ -128,36 +132,34 @@
                                     </tr>
                                 </table>
                             </div>
-                            <button id="adv_perm_edit" class="ui-button ui-widget ui-corner-all">Edit...</button>
+                            
                             <div id="adv_perm_inheritance_div">
                                 <input type="checkbox" id="adv_perm_inheritance" name="inherit">
-                                <label for="adv_perm_inheritance" id="adv_perm_inheritance_label">Include inheritable
-                                    permissions from this object's parent</label>
+                                <label for="adv_perm_inheritance" id="adv_perm_inheritance_label">Apply same permissions as the folder that holds this file</label>
                             </div>
                             <div id="adv_perm_replace_child_div">
                                 <input type="checkbox" id="adv_perm_replace_child_permissions" name="replace_child">
                                 <label for="adv_perm_replace_child_permissions"
-                                    id="adv_perm_replace_child_permissions_label">Replace all child object permissions
-                                    with inheritable permissions from this object</label>
+                                    id="adv_perm_replace_child_permissions_label">Apply same permissions to all files within this folder</label>
                             </div>
                         </div>
                         <div id="adv_owner_tab">
                             <div id="adv_owner_explanation" class="section">You can take or assign ownership of this
                                 object if you have the required permissions or privileges.</div>
-                            <div id="adv_owner_object_name" class="section">Object Name: <span
+                            <div id="adv_owner_object_name" class="section" style="font-weight:bold">Object Name: <span
                                     id="adv_owner_filepath"></span></div>
-                            <div id="adv_owner_current_owner_text">Current owner:</div>
+                            <div id="adv_owner_current_owner_text" style="font-weight:bold">Current owner:</div>
                             <div id="adv_owner_current_owner" class="ui-widget-content section"></div>
-                            <div id="adv_owner_change_owner_text">Change owner to:</div>
+                            <div id="adv_owner_change_owner_text" style="font-weight:bold">Change owner to:</div>
                             <div id="adv_owner_user_list"></div>
-                            <button id="adv_owner_change_button" class="ui-button ui-widget ui-corner-all">Change
+                            <button id="adv_owner_change_button" class="ui-button ui-widget ui-corner-all" style="font-weight:bold">Change
                                 Owner</button>
                         </div>
                         <div id="adv_effective_tab">
                             <div id="adv_effective_object_name" class="section">Object Name: <span
                                     id="adv_effective_filepath"></span></div>
                             <div id="adv_effective_user_text">Group or user name:</div>
-                            <div id="adv_effective_current_user_line" class="section">
+                            <div id="adv_effective_current_user_line" class="section"> 
                                 <span id="adv_effective_current_user" class="ui-widget-content"
                                     style="width: 80%;display: inline-block;">&nbsp</span>
                                 <button id="adv_effective_user_select"
