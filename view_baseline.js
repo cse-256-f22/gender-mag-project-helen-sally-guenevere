@@ -1,5 +1,5 @@
 // Configuration
-show_starter_dialogs = false // set this to "false" to disable the survey and 3-minute timer. Set to "true" before submitting to MTurk!!
+show_starter_dialogs = true // set this to "false" to disable the survey and 3-minute timer. Set to "true" before submitting to MTurk!!
 
 // ---- Set up main Permissions dialog ----
 
@@ -7,7 +7,7 @@ show_starter_dialogs = false // set this to "false" to disable the survey and 3-
 // Make permissions dialog:
 perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
     // The following are standard jquery-ui options. See https://jqueryui.com/dialog/
-    height: 500,
+    height: 700,
     width: 400,
     buttons: {
         OK:{
@@ -18,7 +18,7 @@ perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
             }
         },
         Advanced: {
-            text: "Advanced",
+            text: "More",
             id: "perm-dialog-advanced-button",
             click: function() {
                 open_advanced_dialog(perm_dialog.attr('filepath'))
@@ -29,10 +29,13 @@ perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
 
 // Make the initial "Object Name:" text:
 // If you pass in valid HTML to $(), it will *create* elements instead of selecting them. (You still have to append them, though)
-obj_name_div = $('<div id="permdialog_objname" class="section">Object Name: <span id="permdialog_objname_namespan"></span> </div>')
+obj_name_div = $('<div id="permdialog_objname" class="section" style="font-weight:bold">Object Name: <span id="permdialog_objname_namespan"></span> </div>')
+
+def_div = $('<br><div id="permdialog_advanced_explantion_text" style="color:red; "><span style="font-weight:bold">Deny</span>: allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in) <br><br> <span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying are known as changeable permissions</div><br>')
+
 
 //Make the div with the explanation about special permissions/advanced settings:
-advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For special permissions or advanced settings, click Advanced.</div>')
+advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For editing more specific permissions, click More.</div>')
 
 // Make the (grouped) permission checkboxes table:
 grouped_permissions = define_grouped_permission_checkboxes('permdialog_grouped_permissions')
@@ -145,10 +148,11 @@ perm_remove_user_button.click(function(){
 
 // --- Append all the elements to the permissions dialog in the right order: --- 
 perm_dialog.append(obj_name_div)
-perm_dialog.append($('<div id="permissions_user_title">Group or user names:</div>'))
+perm_dialog.append($('<div id="permissions_user_title" style="font-weight:bold">Group or user names:</div>'))
 perm_dialog.append(file_permission_users)
 perm_dialog.append(perm_add_user_select)
 perm_add_user_select.append(perm_remove_user_button) // Cheating a bit again - add the remove button the the 'add user select' div, just so it shows up on the same line.
+perm_dialog.append(def_div)
 perm_dialog.append(grouped_permissions)
 perm_dialog.append(advanced_expl_div)
 
@@ -336,7 +340,7 @@ let adv_contents = $(`#advdialog`).dialog({
 
 // open user select dialog on "select" button press:
 $("#adv_effective_user_select").click(function(event){
-    open_user_select("adv_effective_current_user") // Update element with id=adv_effective_current_user once user is selected.
+    perm_entry_username_select("adv_effective_current_user") // Update element with id=adv_effective_current_user once user is selected.
 })
 
 // listen for changes to inheritance checkbox:
