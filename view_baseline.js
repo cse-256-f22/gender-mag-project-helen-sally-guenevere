@@ -29,7 +29,7 @@ perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
 
 // Make the initial "Object Name:" text:
 // If you pass in valid HTML to $(), it will *create* elements instead of selecting them. (You still have to append them, though)
-obj_name_div = $('<div id="permdialog_objname" class="section" style="font-weight:bold">Object Name: <span id="permdialog_objname_namespan"></span> </div>')
+obj_name_div = $('<div id="permdialog_objname" class="section">File Name: <span id="permdialog_objname_namespan"></span> </div>')
 
 def_div = $('<br><div id="permdialog_advanced_explantion_text" style="color:red; "><span style="font-weight:bold">Deny</span>: allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in) <br><br> <span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying are known as changeable permissions</div><br>')
 
@@ -148,7 +148,7 @@ perm_remove_user_button.click(function(){
 
 // --- Append all the elements to the permissions dialog in the right order: --- 
 perm_dialog.append(obj_name_div)
-perm_dialog.append($('<div id="permissions_user_title" style="font-weight:bold">Group or user names:</div>'))
+perm_dialog.append($('<div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user name:</div>'))
 perm_dialog.append(file_permission_users)
 perm_dialog.append(perm_add_user_select)
 perm_add_user_select.append(perm_remove_user_button) // Cheating a bit again - add the remove button the the 'add user select' div, just so it shows up on the same line.
