@@ -1,4 +1,39 @@
 // ---- Define your dialogs  and panels here ----
+var instruction_panel = "<div><h1 style='color:rgb(221, 8, 8)'>START HERE- follow ALL instructions as listed</h1></div>";
+var firstStep = "<p>1. Look at the END of the URL after 'tag=' to identify this task's name (i.e, add_new_user)</p>";
+var secondStep = "<p>2. Click one of the 9 buttons below corresponding to the task name</p>";
+var thirdStep = "<p>3. Take a picture of the instructions with your phone to reference later</p>";
+var fourthStep = "<p>4. Follow the insructions accordingly, referencing your phone photo as needed</p>";
+$('#sidepanel').append(instruction_panel);
+$('#sidepanel').append(firstStep);
+$('#sidepanel').append(secondStep);
+$('#sidepanel').append(thirdStep);
+$('#sidepanel').append(fourthStep);
+
+var instructions = "<br><button class='accordion'>remove_direct_permission</button><div class='panel'><p><ol><li>Click Edit Permissions for important_file.txt </li> <li>Select employee 3 at the top </li> <li>Deny write and modify permissions </li><li>Click OK</li></ol></p></div><button class='accordion'>add_new_user</button><div class='panel'><ol><li>Go to presentation_documents, click the add button and select employee 4</li><li> Make sure employee 4 is selected </li><li>Check permissions of read, write, and modify</li> <li> Click OK </li></ol></div><button class='accordion'>add_full_permissions</button><div class='panel'><ol><li>Click into presentation_documents and deny write and modify permissions </ol></div><button class='accordion'>intern_permission</button><div class='panel'><ol><li>Go into intern subproject and click intern</li><li>Check write allow </li></ol></div><button class='accordion'>remove_user_with_inheritance</button><div class='panel'><p><ol><li>Click into presentation_documents</li><li>Select Employee 3 and check deny for write and modify permissions</li></ol></p></div><button class='accordion'>restrict_group_member</button><div class='panel'><ol><li>Click on 'Edit Permissions' next to 'important_file.txt'</li><li>Select 'employees', click 'Remove', and click 'yes'</li><li>Click on 'Add..' and select 'employee1' and click 'OK'Remove employee group from important_file.txt</li><li>Click on Employee 3 and add them back 3. Change Employee 3's permissions to Read Only</li></ol></div><button class='accordion'>let_ta_modify</button><div class='panel'><ol><li>Click on 'Edit Permissions' next to 'Lecture Notes'</li><li>Click on 'more' on the bottom right</li><li>Click on the 2nd check box: 'Apply same permissions to all files within this folder'</li><li>Click on 'yes' and you're done</li></ol></div><button class='accordion'>lost_inheritance</button><div class='panel'><ol><li>Click on 'edit permissions' next to 'Lecture Notes'.</li><li>Click on 'more' on the bottom right corner of the pop up.</li><li>Click the 2nd check box: 'Apply same permissions to all files within this folder'</li><li>Click 'yes', and you're done</li></ol></div>";
+$('#sidepanel').append(instructions);
+
+
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    /* Toggle between adding and removing the "active" class,
+    to highlight the button that controls the panel */
+    this.classList.toggle("active");
+
+    /* Toggle between hiding and showing the active panel */
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+
 
 
 

@@ -1,5 +1,5 @@
 // Configuration
-show_starter_dialogs = true // set this to "false" to disable the survey and 3-minute timer. Set to "true" before submitting to MTurk!!
+show_starter_dialogs = false // set this to "false" to disable the survey and 3-minute timer. Set to "true" before submitting to MTurk!!
 
 // ---- Set up main Permissions dialog ----
 
@@ -47,7 +47,7 @@ file_permission_users = define_single_select_list('permdialog_file_user_list', f
     grouped_permissions.attr('username', selected_user)
 })
 file_permission_users.css({
-    'height':'80px',
+    'height':'100px',
 })
 
 // Make button to add a new user to the list:
