@@ -7,8 +7,8 @@ show_starter_dialogs = false // set this to "false" to disable the survey and 3-
 // Make permissions dialog:
 perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
     // The following are standard jquery-ui options. See https://jqueryui.com/dialog/
-    height: 700,
-    width: 400,
+    height: 800,
+    width: 900,
     buttons: {
         OK:{
             text: "OK",
@@ -33,6 +33,7 @@ obj_name_div = $('<div id="permdialog_objname" class="section">File Name: <span 
 
 def_div = $('<br><div id="permdialog_advanced_explantion_text" style="color:red; "><span style="font-weight:bold">Deny</span>: allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in) <br><br> <span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying are known as changeable permissions</div><br>')
 
+// inheritance_boxes = $('<br><div id="adv_perm_inheritance_div"><input type="checkbox" id="adv_perm_inheritance" name="inherit"><label for="adv_perm_inheritance" id="adv_perm_inheritance_label">Apply same permissions as the folder that holds this file</label></div><div id="adv_perm_replace_child_div"><input type="checkbox" id="adv_perm_replace_child_permissions" name="replace_child"><label for="adv_perm_replace_child_permissions"id="adv_perm_replace_child_permissions_label">Apply same permissions to all files within this folder</label</div>')
 
 //Make the div with the explanation about special permissions/advanced settings:
 advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For editing more specific permissions, click More.</div>')
@@ -74,15 +75,38 @@ cant_remove_dialog = define_new_dialog('cant_remove_inherited_dialog', 'Security
             id: "cant-remove-ok-button",
             click: function() {
                 $( this ).dialog( "close" );
+                console.log("cant remove");
             }
         }
     }
 })
+
+//doesn't show up rn
 cant_remove_dialog.html(`
 <div id="cant_remove_text">
-    You can't remove <span id="cant_remove_username_1" class = "cant_remove_username"></span> because this object is inheriting permissions from 
-    its parent. To remove <span id="cant_remove_username_2" class = "cant_remove_username"></span>, you must prevent this object from inheriting permissions.
-    Turn off the option for inheriting permissions, and then try removing <span id="cant_remove_username_3" class = "cant_remove_username"></span>  again.
+    You can't remove <span id="cant_remove_username_1" class = "cant_remove_username"></span> because this file is inheriting permissions from 
+    its folder. Instead, overwrite <span id="cant_remove_username_1" class = "cant_remove_username"></span>'s allowed permissions by clicking the deny checkboxes.
+</div>`)
+/*
+To remove <span id="cant_remove_username_2" class = "cant_remove_username"></span>, you must prevent this object from inheriting permissions.
+    Turn off the option for inheriting permissions, and then try removing <span id="cant_remove_username_3" class = "cant_remove_username"></span> again.
+*/
+
+//make a remove pop up dialog whenever remove button is clicked
+pre_remove_dialog = define_new_dialog('pre_remove_dialog', 'Remove Note', {
+    buttons: {
+        OK: {
+            text: "OK",
+            id: "pre-remove-ok-button",
+            click: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    }
+})
+pre_remove_dialog.html(`
+<div id="pre_remove_text">
+    If you want to make changes to all employees, please select the user group. If you want to make changes to a specific employee, please add them as a new user to make the required changes.
 </div>`)
 
 // Make a confirmation "are you sure you want to remove?" dialog
@@ -94,6 +118,7 @@ let are_you_sure_dialog = define_new_dialog('are_you_sure_dialog', "Are you sure
             id: "are-you-sure-yes-button",
             click: function() {
                 // Which user and file were they trying to remove permissions for?
+                console.log("are you sure");
                 let username = file_permission_users.attr('selected_item')
                 let filepath = perm_dialog.attr('filepath')
 
@@ -122,7 +147,7 @@ let are_you_sure_dialog = define_new_dialog('are_you_sure_dialog', "Are you sure
 are_you_sure_dialog.text('Do you want to remove permissions for this user?')
 
 // Make actual "remove" button:
-perm_remove_user_button  = $('<button id="perm_remove_user" class="ui-button ui-widget ui-corner-all">Remove</button>')
+perm_remove_user_button  = $('<button id="perm_remove_user" class="ui-button ui-widget ui-corner-all" title = "If you want to make changes to all employees, please select the user group. If you want to make changes to a specific employee, please add them as a new user to make the required changes">Remove</button>')
 perm_remove_user_button.click(function(){
     // Get the current user and filename we are working with:
     let selected_username = file_permission_users.attr('selected_item')
@@ -130,10 +155,16 @@ perm_remove_user_button.click(function(){
     // Get the actual element that we want to remove from the user list:
     let selected_user_elem = file_permission_users.find('.ui-selected') // find the element inside file_permission_users that has the special class ui-selected (given by jquery-ui selectable widget)
     let has_inherited_permissions = selected_user_elem.attr('inherited')  === "true" // does it have inherited attribute set to "true"?
+    console.log("inherited:" + has_inherited_permissions);
+    //check remove note first:
+     
+    //if($( pre_remove_dialo ).dialog( "close" )){}
+
     
     // Check whether it's OK to remove it:
     if(has_inherited_permissions) { 
         // Not OK -  pop up "can't remove" dialog instead
+        
         $('.cant_remove_username').text(selected_username) // populate ALL the fields with the username
         cant_remove_dialog.dialog('open') // open the dialog
     }
@@ -141,20 +172,28 @@ perm_remove_user_button.click(function(){
     {
         // OK to remove - pop up confirmation dialog
         // pass along username and filepath to the dialog, so that it knows what to remove if they click "Yes"
+        
         are_you_sure_dialog.dialog('open') // Open the "are you sure" dialog
+        pre_remove_dialog.dialog('open')
+        
     }
+
 })
 
 
 // --- Append all the elements to the permissions dialog in the right order: --- 
 perm_dialog.append(obj_name_div)
-perm_dialog.append($('<div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user name:</div>'))
+//perm_dialog.append($('<div id="permissions_user_step"><strong style="color: red">Step 1</strong> a group or user name:</div>'))
+perm_dialog.append($('<div id="step_1"><strong style="text-decoration: underline; font-size: 25px">STEP 1:</strong></div>'))
+perm_dialog.append($('<br><div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user name:</div>'))
 perm_dialog.append(file_permission_users)
 perm_dialog.append(perm_add_user_select)
 perm_add_user_select.append(perm_remove_user_button) // Cheating a bit again - add the remove button the the 'add user select' div, just so it shows up on the same line.
+perm_dialog.append($('<br><div id="step_1"><strong style="text-decoration: underline;font-size: 25px">STEP 2:</strong></div>'))
 perm_dialog.append(def_div)
 perm_dialog.append(grouped_permissions)
 perm_dialog.append(advanced_expl_div)
+// perm_dialog.append(inheritance_boxes)
 
 // --- Additional logic for reloading contents when needed: ---
 //Define an observer which will propagate perm_dialog's filepath attribute to all the relevant elements, whenever it changes:
@@ -242,21 +281,21 @@ function open_advanced_dialog(file_path) {
 
 
 
-    // permissions list for permissions tab:
-    let users = get_file_users(file_obj)
-    for(let u in users) {
-        let grouped_perms = get_grouped_permissions(file_obj, u)
-        for(let ace_type in grouped_perms) {
-            for(let perm in grouped_perms[ace_type]) {
-                $('#adv_perm_table').append(`<tr id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}">
-                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${ace_type}</td>
-                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_name">${u}</td>
-                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_permission">${perm}</td>
-                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${grouped_perms[ace_type][perm].inherited?"Parent Object":"(not inherited)"}</td>
-                </tr>`)
-            }
-        }
-    }
+    // // permissions list for permissions tab:
+    // let users = get_file_users(file_obj)
+    // for(let u in users) {
+    //     let grouped_perms = get_grouped_permissions(file_obj, u)
+    //     for(let ace_type in grouped_perms) {
+    //         for(let perm in grouped_perms[ace_type]) {
+    //             $('#adv_perm_table').append(`<tr id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}">
+    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${ace_type}</td>
+    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_name">${u}</td>
+    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_permission">${perm}</td>
+    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${grouped_perms[ace_type][perm].inherited?"Parent Object":"(not inherited)"}</td>
+    //             </tr>`)
+    //         }
+    //     }
+    // }
 
     // user list for owner tab:
     let all_user_list = make_all_users_list('adv_owner_','adv_owner_current_owner') 
