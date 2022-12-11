@@ -92,7 +92,7 @@
                 <div id="filestructure"></div>
                 <!-- structure for Permission Entry dialog: -->
 
-                <div title="Permission Entry" id="permentry">
+                <!-- <div title="Permission Entry" id="permentry">
                     <div id="perm_entry_inheritance_explanation" style="display:none" class="section">This permission is
                         inherited from the parent object. Make changes here to override the inherited permissions.</div>
                     <span id="perm_entry_name_text">User: </span>
@@ -106,21 +106,20 @@
                             <th id="perm_entry_header_deny">Deny</th>
                         </tr>
                     </table>
-                </div>
+                </div> -->
                 <!-- structure for the Advanced dialog: -->
                 <div title="Advanced Security Settings" id="advdialog" style="overflow:hidden">
                     <div id="advtabs">
                         <ul id="advtabs_titles">
                             <li id="advtab_title_permissions"><a href="#adv_permissions_tab"
                                     id="adv_permissions_tab_elem">Permissions</a></li>
-                            <li id="advtab_title_owner"><a href="#adv_owner_tab" id="adv_owner_tab_elem">Owner</a></li>
-                            <!-- <li id="advtab_title_effective"><a href="#adv_effective_tab"
+                            <!-- <li id="advtab_title_owner"><a href="#adv_owner_tab" id="adv_owner_tab_elem">Owner</a></li>
+                            <li id="advtab_title_effective"><a href="#adv_effective_tab"
                                     id="adv_effective_tab_elem">Effective Permissions</a></li> -->
                         </ul>
-                        <!-- <div id="adv_permissions_tab">
-                            <div id="adv_perm_object_name" class="section" >File Name: <span
-                                    id="adv_perm_filepath"></span></div>
-                            <button id="adv_perm_edit" class="ui-button ui-widget ui-corner-all">Edit...</button>
+                        <div id="adv_permissions_tab">
+                            <div id="adv_perm_object_name" class="section" >You are currently in: <strong><span id="adv_perm_filepath"></span></strong></div>
+                            <!-- <button id="adv_perm_edit" class="ui-button ui-widget ui-corner-all">Edit...</button>
                             <div id="adv_perm_entries_text" style="font-weight:bold">Permission entries:</div>
                             <div id="adv_perm_table_container" style="height:100px;overflow-y:scroll"
                                 class="ui-widget-content section">
@@ -131,8 +130,8 @@
                                         <th id="adv_perm_header_permission">Permission</th>
                                         <th id="adv_perm_header_inherited">Inherited from</th>
                                     </tr>
-                                </table>
-                            </div> -->
+                                </table> -->
+                            </div>
                             
                             <div id="adv_perm_inheritance_div">
                                 <input type="checkbox" id="adv_perm_inheritance" name="inherit">
@@ -144,7 +143,9 @@
                                     id="adv_perm_replace_child_permissions_label">Apply same permissions to all files within this folder</label>
                             </div>
                         </div>
-                        <div id="adv_owner_tab">
+
+
+                        <!--<div id="adv_owner_tab">
                             <div id="adv_owner_explanation" class="section">You can take or assign ownership of this
                                 object if you have the required permissions or privileges.</div>
                             <div id="adv_owner_object_name" class="section" style="font-weight:bold">File Name: <span
@@ -156,6 +157,8 @@
                             <button id="adv_owner_change_button" class="ui-button ui-widget ui-corner-all" style="font-weight:bold">Change
                                 Owner</button>
                         </div>
+
+
                         <div id="adv_effective_tab">
                             <div id="adv_effective_object_name" class="section">Object Name: <span
                                     id="adv_effective_filepath"></span></div>
@@ -169,7 +172,7 @@
                             <div id="adv_effective_effective_text">Effective permissions:</div>
                             <div id="adv_effective_effective_list" class="ui-widget-content"
                                 style="height:150px;overflow-y:scroll"></div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
                 <!-- structure for the User Select dialog: -->

@@ -1,13 +1,35 @@
 // Configuration
 show_starter_dialogs = false // set this to "false" to disable the survey and 3-minute timer. Set to "true" before submitting to MTurk!!
 
+
+// Notes dialog
+notes_dialog = define_new_dialog('notesdialog', title='Notes', options = {
+    // The following are standard jquery-ui options. See https://jqueryui.com/dialog/
+    height: 800,
+    width: 900,
+    /*
+    buttons: {
+        OK:{
+            text: "OK",
+            id: "notes-dialog-ok-button",
+            click: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    }
+    */
+})
+
+notes_header = $('<h1>Note:</h1>')
+
+
 // ---- Set up main Permissions dialog ----
 
 // --- Create all the elements, and connect them as needed: ---
 // Make permissions dialog:
 perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
     // The following are standard jquery-ui options. See https://jqueryui.com/dialog/
-    height: 800,
+    height: 700,
     width: 900,
     buttons: {
         OK:{
@@ -29,14 +51,21 @@ perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
 
 // Make the initial "Object Name:" text:
 // If you pass in valid HTML to $(), it will *create* elements instead of selecting them. (You still have to append them, though)
-obj_name_div = $('<div id="permdialog_objname" class="section">File Name: <span id="permdialog_objname_namespan"></span> </div>')
+obj_name_div = $('<div id="permdialog_objname" class="section" style="font-size:25px;">You are currently in: <strong><span id="permdialog_objname_namespan" style=""></span></strong> </div>')
 
-def_div = $('<br><div id="permdialog_advanced_explantion_text" style="color:red; "><span style="font-weight:bold">Deny</span>: allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in) <br><br> <span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying are known as changeable permissions</div><br>')
+//allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in)
+def_div = $('<br><div id="permdialog_advanced_explantion_text"  style="color:red;"><span style="font-weight:bold;">Deny</span>: denies the permission even if it is allowed by the enclosing folder  </div>')
+def_div_2 = $('<br><div id="permdialog_advanced_explantion_text"  style="color:green;"><span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying</div><br>')
+
+
 
 // inheritance_boxes = $('<br><div id="adv_perm_inheritance_div"><input type="checkbox" id="adv_perm_inheritance" name="inherit"><label for="adv_perm_inheritance" id="adv_perm_inheritance_label">Apply same permissions as the folder that holds this file</label></div><div id="adv_perm_replace_child_div"><input type="checkbox" id="adv_perm_replace_child_permissions" name="replace_child"><label for="adv_perm_replace_child_permissions"id="adv_perm_replace_child_permissions_label">Apply same permissions to all files within this folder</label</div>')
 
 //Make the div with the explanation about special permissions/advanced settings:
-advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For editing more specific permissions, click More.</div>')
+advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For applying specific permissions to all files in this folder, click More.</div>')
+
+//To apply changes to all files within the enclosing folder or 
+
 
 // Make the (grouped) permission checkboxes table:
 grouped_permissions = define_grouped_permission_checkboxes('permdialog_grouped_permissions')
@@ -185,12 +214,13 @@ perm_remove_user_button.click(function(){
 perm_dialog.append(obj_name_div)
 //perm_dialog.append($('<div id="permissions_user_step"><strong style="color: red">Step 1</strong> a group or user name:</div>'))
 perm_dialog.append($('<div id="step_1"><strong style="text-decoration: underline; font-size: 25px">STEP 1:</strong></div>'))
-perm_dialog.append($('<br><div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user name:</div>'))
+perm_dialog.append($('<br><div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user:</div>'))
 perm_dialog.append(file_permission_users)
 perm_dialog.append(perm_add_user_select)
 perm_add_user_select.append(perm_remove_user_button) // Cheating a bit again - add the remove button the the 'add user select' div, just so it shows up on the same line.
 perm_dialog.append($('<br><div id="step_1"><strong style="text-decoration: underline;font-size: 25px">STEP 2:</strong></div>'))
 perm_dialog.append(def_div)
+perm_dialog.append(def_div_2)
 perm_dialog.append(grouped_permissions)
 perm_dialog.append(advanced_expl_div)
 // perm_dialog.append(inheritance_boxes)
@@ -201,7 +231,8 @@ define_attribute_observer(perm_dialog, 'filepath', function(){
     let current_filepath = perm_dialog.attr('filepath')
 
     grouped_permissions.attr('filepath', current_filepath) // set filepath for permission checkboxes
-    $('#permdialog_objname_namespan').text(current_filepath) // set filepath for Object Name text
+    const myArray = current_filepath.split("/");
+    $('#permdialog_objname_namespan').text(myArray[myArray.length - 1]) // set filepath for Object Name text
 
     // Generate element with all the file-specific users:
     file_users = get_file_users(path_to_file[current_filepath])
@@ -262,15 +293,16 @@ function open_advanced_dialog(file_path) {
     let file_obj = path_to_file[file_path]
 
     // set file path in UI:
-    $('#adv_perm_filepath').text(file_path);
-    $('#adv_owner_filepath').text(file_path);
-    $('#adv_effective_filepath').text(file_path);
+    const file_name = file_path.split("/");
+    $('#adv_perm_filepath').text(file_name[file_name.length - 1]);
+    // $('#adv_owner_filepath').text(file_path);
+    // $('#adv_effective_filepath').text(file_path);
     $('#advdialog').attr('filepath', file_path);
 
     // clear dynamic content:
-    $('#adv_perm_table tr:gt(0)').remove()
-    $('#adv_owner_user_list').empty()
-    $(`.effectivecheckcell`).empty()
+    // $('#adv_perm_table tr:gt(0)').remove()
+    // $('#adv_owner_user_list').empty()
+    // $(`.effectivecheckcell`).empty()
 
     if(file_obj.using_permission_inheritance) {
         $('#adv_perm_inheritance').prop('checked', true)
@@ -281,28 +313,29 @@ function open_advanced_dialog(file_path) {
 
 
 
-    // // permissions list for permissions tab:
-    // let users = get_file_users(file_obj)
-    // for(let u in users) {
-    //     let grouped_perms = get_grouped_permissions(file_obj, u)
-    //     for(let ace_type in grouped_perms) {
-    //         for(let perm in grouped_perms[ace_type]) {
-    //             $('#adv_perm_table').append(`<tr id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}">
-    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${ace_type}</td>
-    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_name">${u}</td>
-    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_permission">${perm}</td>
-    //                 <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${grouped_perms[ace_type][perm].inherited?"Parent Object":"(not inherited)"}</td>
-    //             </tr>`)
-    //         }
-    //     }
-    // }
+    // permissions list for permissions tab:
+    let users = get_file_users(file_obj)
+    for(let u in users) {
+        console.log(u);
+        let grouped_perms = get_grouped_permissions(file_obj, u)
+        for(let ace_type in grouped_perms) {
+            for(let perm in grouped_perms[ace_type]) {
+                $('#adv_perm_table').append(`<tr id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}">
+                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${ace_type}</td>
+                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_name">${u}</td>
+                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_permission">${perm}</td>
+                    <td id="adv_perm_${file_obj.filename}__${u}_${ace_type}_${perm}_type">${grouped_perms[ace_type][perm].inherited?"Parent Object":"(not inherited)"}</td>
+                </tr>`)
+            }
+        }
+    }
 
     // user list for owner tab:
-    let all_user_list = make_all_users_list('adv_owner_','adv_owner_current_owner') 
+    // let all_user_list = make_all_users_list('adv_owner_','adv_owner_current_owner') 
 
-    $('#adv_owner_current_owner').text(get_user_name(file_obj.owner))
+    // $('#adv_owner_current_owner').text(get_user_name(file_obj.owner))
 
-    $('#adv_owner_user_list').append(all_user_list)
+    // $('#adv_owner_user_list').append(all_user_list)
 
     // open dialog:
     $(`#advdialog`).dialog('open')
@@ -360,8 +393,8 @@ $( "#advtabs" ).tabs({
 });
 let adv_contents = $(`#advdialog`).dialog({
     position: { my: "top", at: "top", of: $('#html-loc') },
-    width: 700,
-    height: 450,
+    width: 500,
+    height: 300,
     modal: true,
     autoOpen: false,
     appendTo: "#html-loc",
@@ -755,3 +788,4 @@ $('#survey-form').submit(function(){
     $('#survey-dialog').dialog( "close" );
     event.preventDefault();
 })
+

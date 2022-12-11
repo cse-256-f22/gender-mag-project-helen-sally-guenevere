@@ -227,8 +227,17 @@ function define_grouped_permission_checkboxes(id_prefix, which_groups = null) {
     // For each permissions group, create a row:
     for(let g of which_groups){
         let row = $(`<tr id="${id_prefix}_row_${g}">
-            <td id="${id_prefix}_${g}_name">${g}</td>
+        
+        <td id="${id_prefix}_${g}_name">${g}</td>
+    </tr>`)
+        if (g == "Write" || g=="Modify") {
+            console.log(g);
+            row = $(`<tr id="${id_prefix}_row_${g}">
+        
+            <td id="${id_prefix}_${g}_name" style="color:green;">${g}</td>
         </tr>`)
+        }
+
         for(let ace_type of ['allow', 'deny']) {
             row.append(`<td id="${id_prefix}_${g}_${ace_type}_cell">
                 <input type="checkbox" id="${id_prefix}_${g}_${ace_type}_checkbox" ptype="${ace_type}" class="groupcheckbox" group="${g}" ></input>
