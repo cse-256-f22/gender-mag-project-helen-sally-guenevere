@@ -21,6 +21,8 @@ notes_dialog = define_new_dialog('notesdialog', title='Notes', options = {
 })
 
 notes_header = $('<h1>Note:</h1>')
+//single silhouette = one user, two silhouettes = group
+//if you want to make changes to a single user within a group, please add them to the user list first
 
 
 // ---- Set up main Permissions dialog ----
@@ -29,7 +31,7 @@ notes_header = $('<h1>Note:</h1>')
 // Make permissions dialog:
 perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
     // The following are standard jquery-ui options. See https://jqueryui.com/dialog/
-    height: 700,
+    height: 800,
     width: 900,
     buttons: {
         OK:{
@@ -54,7 +56,7 @@ perm_dialog = define_new_dialog('permdialog', title='Permissions', options = {
 obj_name_div = $('<div id="permdialog_objname" class="section" style="font-size:25px;">You are currently in: <strong><span id="permdialog_objname_namespan" style=""></span></strong> </div>')
 
 //allows a user to block any permissions given to a user through inheritance (i.e, gaining permission from a folder the file is located in)
-def_div = $('<br><div id="permdialog_advanced_explantion_text"  style="color:red;"><span style="font-weight:bold;">Deny</span>: denies the permission even if it is allowed by the enclosing folder  </div>')
+def_div = $('<br><div id="permdialog_advanced_explantion_text"  style="color:red;"><span style="font-weight:bold;">Deny</span>: denies the permission even if it is allowed by the enclosing folder (i.e, if both allow and deny are checked, deny overpowers allow) </div>')
 def_div_2 = $('<br><div id="permdialog_advanced_explantion_text"  style="color:green;"><span style="font-weight:bold">Changeable permissions</span>: any permissions related to writing and modifying</div><br>')
 
 
@@ -62,7 +64,7 @@ def_div_2 = $('<br><div id="permdialog_advanced_explantion_text"  style="color:g
 // inheritance_boxes = $('<br><div id="adv_perm_inheritance_div"><input type="checkbox" id="adv_perm_inheritance" name="inherit"><label for="adv_perm_inheritance" id="adv_perm_inheritance_label">Apply same permissions as the folder that holds this file</label></div><div id="adv_perm_replace_child_div"><input type="checkbox" id="adv_perm_replace_child_permissions" name="replace_child"><label for="adv_perm_replace_child_permissions"id="adv_perm_replace_child_permissions_label">Apply same permissions to all files within this folder</label</div>')
 
 //Make the div with the explanation about special permissions/advanced settings:
-advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">For applying specific permissions to all files in this folder, click More.</div>')
+advanced_expl_div = $('<div id="permdialog_advanced_explantion_text">To transfer the same permissions to another file/folder or to change ownership, click More.</div>')
 
 //To apply changes to all files within the enclosing folder or 
 
@@ -98,6 +100,8 @@ perm_add_user_select.find('span').hide()// Cheating a bit - just show the button
 
 // Make a dialog which shows up when they're not allowed to remove that user from that file (because of inheritance)
 cant_remove_dialog = define_new_dialog('cant_remove_inherited_dialog', 'Security', {
+    height: 200,
+    width: 500,
     buttons: {
         OK: {
             text: "OK",
@@ -113,8 +117,8 @@ cant_remove_dialog = define_new_dialog('cant_remove_inherited_dialog', 'Security
 //doesn't show up rn
 cant_remove_dialog.html(`
 <div id="cant_remove_text">
-    You can't remove <span id="cant_remove_username_1" class = "cant_remove_username"></span> because this file is inheriting permissions from 
-    its folder. Instead, overwrite <span id="cant_remove_username_1" class = "cant_remove_username"></span>'s allowed permissions by clicking the deny checkboxes.
+    You can't remove <strong><span id="cant_remove_username_1" class = "cant_remove_username"></span></strong> because this file is inheriting permissions from 
+    its folder. <br>Instead, <strong><span style='color:red'>overwrite</span></strong> <span id="cant_remove_username_1" class = "cant_remove_username"></span>'s allowed permissions by clicking the <strong><span style='color: red'>deny</span></strong> checkboxes.
 </div>`)
 /*
 To remove <span id="cant_remove_username_2" class = "cant_remove_username"></span>, you must prevent this object from inheriting permissions.
@@ -214,10 +218,14 @@ perm_remove_user_button.click(function(){
 perm_dialog.append(obj_name_div)
 //perm_dialog.append($('<div id="permissions_user_step"><strong style="color: red">Step 1</strong> a group or user name:</div>'))
 perm_dialog.append($('<div id="step_1"><strong style="text-decoration: underline; font-size: 25px">STEP 1:</strong></div>'))
-perm_dialog.append($('<br><div id="permissions_user_title"><strong style="color: red">Select</strong> a group or user:</div>'))
+perm_dialog.append($('<br><div id="permissions_user_title"><strong style="color: red">Select</strong> a group of users or a single user:</div>'))
 perm_dialog.append(file_permission_users)
+perm_dialog.append($('<div id="perm_note"><strong style="color: red">Note</strong> To make changes only to a single user within a group, please FIRST add the individual user to the list and THEN update its permissions below. </div>'))
+
+//To make changes only to a single user within a group, please add the individual user to the list first and then update the permissions below.
 perm_dialog.append(perm_add_user_select)
 perm_add_user_select.append(perm_remove_user_button) // Cheating a bit again - add the remove button the the 'add user select' div, just so it shows up on the same line.
+
 perm_dialog.append($('<br><div id="step_1"><strong style="text-decoration: underline;font-size: 25px">STEP 2:</strong></div>'))
 perm_dialog.append(def_div)
 perm_dialog.append(def_div_2)
@@ -295,13 +303,13 @@ function open_advanced_dialog(file_path) {
     // set file path in UI:
     const file_name = file_path.split("/");
     $('#adv_perm_filepath').text(file_name[file_name.length - 1]);
-    // $('#adv_owner_filepath').text(file_path);
-    // $('#adv_effective_filepath').text(file_path);
+    $('#adv_owner_filepath').text(file_path);
+    //$('#adv_effective_filepath').text(file_path);
     $('#advdialog').attr('filepath', file_path);
 
     // clear dynamic content:
-    // $('#adv_perm_table tr:gt(0)').remove()
-    // $('#adv_owner_user_list').empty()
+     $('#adv_perm_table tr:gt(0)').remove()
+     $('#adv_owner_user_list').empty()
     // $(`.effectivecheckcell`).empty()
 
     if(file_obj.using_permission_inheritance) {
@@ -330,13 +338,14 @@ function open_advanced_dialog(file_path) {
         }
     }
 
-    // user list for owner tab:
-    // let all_user_list = make_all_users_list('adv_owner_','adv_owner_current_owner') 
+    //user list for owner tab:
+    let all_user_list = make_all_users_list('adv_owner_','adv_owner_current_owner') 
 
-    // $('#adv_owner_current_owner').text(get_user_name(file_obj.owner))
+    $('#adv_owner_current_owner').text(get_user_name(file_obj.owner))
 
-    // $('#adv_owner_user_list').append(all_user_list)
+     $('#adv_owner_user_list').append(all_user_list)
 
+    
     // open dialog:
     $(`#advdialog`).dialog('open')
 }
@@ -394,7 +403,7 @@ $( "#advtabs" ).tabs({
 let adv_contents = $(`#advdialog`).dialog({
     position: { my: "top", at: "top", of: $('#html-loc') },
     width: 500,
-    height: 300,
+    height: 500,
     modal: true,
     autoOpen: false,
     appendTo: "#html-loc",

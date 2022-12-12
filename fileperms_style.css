@@ -18,6 +18,9 @@
     right: 0;
 }
 
+#adv_owner_tab{
+    height: 400px;
+}
 
 #mturk-top-banner-drop-down-content {
     position: absolute;
